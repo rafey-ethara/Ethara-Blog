@@ -1,28 +1,28 @@
 # Ethara Blog
 
-A production-ready full-stack blog platform built with **Next.js 14**, **Express**, **MongoDB**, **Framer Motion**, and **TipTap**. Features scroll-based animations, a rich text editor, newsletter subscriptions, contact form with email notifications, and a full admin dashboard.
+A production-ready full-stack blog platform built with **Next.js 14**, **Express**, **MongoDB**, **Framer Motion** and **TipTap**. It has scroll-based animations, a rich text editor, newsletter subscriptions, a contact form with email notifications and a full admin dashboard.
 
 ---
 
-## ✨ Features
+## Features
 
-- **Scroll-based animations** — Framer Motion `useInView`, `AnimatePresence`, staggered reveals
-- **Page transitions** — smooth fade/slide between all routes
-- **Full CRUD** — posts, categories, tags via admin dashboard
-- **Rich text editor** — TipTap with full toolbar (bold, italic, headings, code blocks, images, links)
-- **Newsletter modal** — animated with confetti success state + dual email notifications
-- **Contact modal** — animated, focus-trapped, sends email to owner
-- **Reading progress bar** — smooth scaleX transform at top of post pages
-- **Parallax cover images** — on single post pages
-- **Live search** — debounced 300ms with animated results
-- **SEO-ready** — dynamic metadata, Open Graph, Twitter Cards, JSON-LD, sitemap, robots.txt
-- **Admin dashboard** — protected by JWT, full post management
-- **Rate limiting** — on all public endpoints
-- **Input sanitization** — XSS protection on all form inputs
+- **Scroll-based animations** - Framer Motion `useInView`, `AnimatePresence` and staggered reveals
+- **Page transitions** - smooth fade/slide between all routes
+- **Full CRUD** - posts, categories and tags via admin dashboard
+- **Rich text editor** - TipTap with full toolbar (bold, italic, headings, code blocks, images and links)
+- **Newsletter modal** - animated with confetti success state and dual email notifications
+- **Contact modal** - animated, focus-trapped and sends email to owner
+- **Reading progress bar** - smooth scaleX transform at top of post pages
+- **Parallax cover images** - on single post pages
+- **Live search** - debounced at 300ms with animated results
+- **SEO-ready** - dynamic metadata, Open Graph, Twitter Cards, JSON-LD, sitemap and robots.txt
+- **Admin dashboard** - protected by JWT with full post management
+- **Rate limiting** - on all public endpoints
+- **Input sanitization** - XSS protection on all form inputs
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 Ethara-Blog/
@@ -33,11 +33,11 @@ Ethara-Blog/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ (v24 LTS installed via this project)
+- Node.js 18+
 - MongoDB (local or MongoDB Atlas)
 - Cloudinary account (for image uploads)
 - Gmail account with App Password (for emails)
@@ -56,7 +56,7 @@ npm install
 
 ### 2. Configure Environment Variables
 
-**Backend** — copy and fill in:
+**Backend** - copy and fill in:
 ```bash
 cp backend/.env.example backend/.env
 ```
@@ -80,7 +80,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 CORS_ORIGINS=http://localhost:3000
 ```
 
-**Frontend** — copy and fill in:
+**Frontend** - copy and fill in:
 ```bash
 cp frontend/.env.example frontend/.env.local
 ```
@@ -89,7 +89,7 @@ cp frontend/.env.example frontend/.env.local
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_SITE_NAME=Ethara Blog
-NEXT_PUBLIC_SITE_DESCRIPTION=A modern blog about technology, design, and productivity.
+NEXT_PUBLIC_SITE_DESCRIPTION=A modern blog about technology, design and productivity.
 ```
 
 ### 3. Seed the Database
@@ -107,7 +107,7 @@ cd backend
 npm run seed
 ```
 
-You'll see output like:
+You will see output like:
 ```
 ✅ Connected to MongoDB
 🗑️  Cleared existing data
@@ -145,40 +145,40 @@ npm run dev
 
 ---
 
-## 📧 Email Setup (Gmail)
+## Email Setup (Gmail)
 
 1. Go to [Google Account Security](https://myaccount.google.com/security)
 2. Enable 2-Step Verification
-3. Go to **App Passwords** → Generate a password for "Mail"
+3. Go to **App Passwords** and generate a password for "Mail"
 4. Use that 16-character password as `SMTP_PASS` in your `.env`
 
 ---
 
-## 🌩️ Cloudinary Setup
+## Cloudinary Setup
 
 1. Create a free account at [cloudinary.com](https://cloudinary.com)
-2. Go to Dashboard → copy your Cloud Name, API Key, API Secret
+2. Go to Dashboard and copy your Cloud Name, API Key and API Secret
 3. Add them to `backend/.env`
 
 ---
 
-## 🚂 Deploy to Railway (Single Monorepo)
+## Deploy to Railway (Single Monorepo)
 
 ### Frontend Service
 
 1. Create a new Railway project
-2. Add a service → connect your GitHub repo
-3. Set **Root Directory**: `frontend`
-4. Set **Build Command**: `npm run build`
-5. Set **Start Command**: `npm start`
+2. Add a service and connect your GitHub repo
+3. Set **Root Directory** to `frontend`
+4. Set **Build Command** to `npm run build`
+5. Set **Start Command** to `npm start`
 6. Add all `NEXT_PUBLIC_*` environment variables
 
 ### Backend Service
 
-1. In the same Railway project, add another service
-2. Set **Root Directory**: `backend`
-3. Set **Build Command**: `npm install`
-4. Set **Start Command**: `npm start`
+1. In the same Railway project add another service
+2. Set **Root Directory** to `backend`
+3. Set **Build Command** to `npm install`
+4. Set **Start Command** to `npm start`
 5. Add all backend environment variables
 6. Add a MongoDB plugin (Railway has native MongoDB support)
 
@@ -190,7 +190,7 @@ npm run dev
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 ### Posts
 | Method | Endpoint | Auth | Description |
@@ -235,7 +235,7 @@ npm run dev
 ### Auth
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| POST | `/api/auth/login` | Public | Login → returns JWT |
+| POST | `/api/auth/login` | Public | Login and returns JWT |
 | POST | `/api/auth/logout` | Auth | Logout (client-side token clear) |
 | GET | `/api/auth/me` | Auth | Get current user |
 
@@ -264,7 +264,7 @@ npm run dev
 
 ---
 
-## 🧪 Health Check
+## Health Check
 
 ```bash
 curl http://localhost:5000/api/health
@@ -273,7 +273,7 @@ curl http://localhost:5000/api/health
 
 ---
 
-## 📦 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -295,6 +295,6 @@ curl http://localhost:5000/api/health
 
 ---
 
-## 📄 License
+## License
 
-MIT — feel free to use and adapt.
+MIT - feel free to use and adapt.
