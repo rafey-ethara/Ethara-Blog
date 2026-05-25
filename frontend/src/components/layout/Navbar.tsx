@@ -112,6 +112,9 @@ export default function Navbar() {
     return pathname.startsWith(href);
   };
 
+  // Don't render the public navbar on admin pages
+  if (pathname.startsWith('/admin')) return null;
+
   return (
     <>
       <motion.header

@@ -2,6 +2,7 @@
 
 import { useState, useRef, FormEvent } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 // ─── SVG Social Icons ─────────────────────────────────────────────────────────
 
@@ -190,6 +191,10 @@ function MiniNewsletterForm() {
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+
+  // Don't render the public footer on admin pages
+  if (pathname.startsWith('/admin')) return null;
 
   return (
     <footer
