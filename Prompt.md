@@ -120,24 +120,32 @@ Error:
 **REST API Endpoints**
 
 Public endpoints:
-- `/api/posts` - all posts with pagination, filters, and sort
-- `/api/posts/:slug` - single post by slug
-- `/api/categories` - all categories
-- `/api/tags` - all tags
-- `/api/comments/:postId` (GET) - fetch comments for a post
-- `/api/comments/:postId` (POST) - submit a new comment
-- `/api/contact` - handle contact form submissions
-- `/api/newsletter` - register a new subscriber
-- `/api/search` - full-text search across posts using a query string
-- `/api/auth/login` - submit credentials and receive a JWT
+- `/api/posts` - fetch all posts with pagination, filtering, and sorting. Supports query parameters like `page`, `limit`, `category`, `tag`, `author`, `status`, `search`, and `sort`. Response includes `meta` for pagination and `data` for the posts array.
+  - Example: `/api/posts?page=2&limit=10&category=technology&sort=publishedAt:desc`
+- `/api/posts/:slug` - single post by slug, including author, category, tags and approved comments.
+- `/api/categories` - all categories, with counts of published posts.
+- `/api/tags` - all tags, with counts of published posts.
+- `/api/comments/:postId` (GET) - fetch approved comments for a post with pagination.
+- `/api/comments/:postId` (POST) - submit a new comment; validate name, email, and content before saving.
+- `/api/contact` - handle contact form submissions, send notification email, and log the submission.
+- `/api/newsletter` - register a new subscriber, deduplicate by email, and send confirmation email.
+- `/api/search` - full-text search across post titles, content, and tags; accepts `q`, `page`, and `limit`.
+- `/api/auth/login` - submit credentials and receive a JWT.
 
 Admin only endpoints:
-- `/api/posts` (POST) - create a new post
-- `/api/posts/:id` (PUT) - update an existing post
-- `/api/posts/:id` (DELETE) - remove a post
-- `/api/categories` (POST) - create a new category
-- `/api/comments/:id` (DELETE) - remove a comment
-- `/api/auth/me` (GET) - return the currently authenticated user
+- `/api/posts` (POST) - create a new post, accepting title, slug, content, cover image, category, tags, status, and author.
+- `/api/posts/:id` (PUT) - update an existing post with the same payload.
+- `/api/posts/:id` (DELETE) - remove a post and its associated comment references.
+- `/api/categories` (POST) - create a new category.
+- `/api/comments/:id` (DELETE) - remove a comment.
+- `/api/auth/me` (GET) - return the currently authenticated user.
+
+**API contract expectations**
+- All list endpoints return `{ success: true, data: [...], meta: { page, limit, total, totalPages } }`.
+- Single-resource endpoints return `{ success: true, data: {...} }`.
+- Validation failures return `{ success: false, error: 'Validation failed.', details: {...} }`.
+- Authenticated admin routes require `Authorization: Bearer <token>`.
+- Public routes are rate-limited and sanitize all inputs.
 
 **SEO Output**
 - Dynamic `<title>` and `<meta name="description">` per page using Next.js Metadata API
@@ -189,16 +197,31 @@ Admin only endpoints:
 
 **Frontend**
 - Next.js (App Router)
+  - Chosen for its modern routing and layout system, built-in server components, and the new Metadata API. The App Router makes it easy to define shared layouts, loading states, and SEO meta per route, while enabling fast page transitions and route-level code splitting.
+  - Use server components for data fetching on index and detail pages, while keeping interactive admin and form pages as client components.
 - Framer Motion
+  - Use for smooth, intentional animations on page transitions, scroll reveals, cards, modals, and micro-interactions.
 - Tailwind CSS
+  - Chosen for utility-first styling, responsive design without custom CSS boilerplate, and consistent design tokens across the app.
+  - Use Tailwind classes for layout, spacing, typography, hover states, and animation-ready transforms so UI updates stay fast and maintainable.
 - TipTap (rich text editor)
+  - Use for a flexible admin editor that outputs sanitized HTML and supports headings, lists, blockquotes, code blocks, links, and embedded images.
 - SWR or React Query
+  - Use for client-side caching, pagination, and automatic revalidation of blog lists and admin data.
 - React Hook Form with Zod
+  - Use for form validation and schema-driven input handling across contact, newsletter, login, comment, and admin forms.
 - react-hot-toast
+  - Use for lightweight success and error notifications after API calls.
 
 **Backend**
 - Node.js with Express
+  - Build a REST API with separated route handlers, controllers, services, and middleware.
+  - Use express middleware for JSON parsing, CORS, helmet, request logging, rate limiting, and error handling.
+  - Validate incoming payloads and query params with Zod or a comparable schema validator.
+  - Auth flows should use JWT for login, token issuance, and protected admin middleware.
+  - Structure routes under `api/auth`, `api/posts`, `api/categories`, `api/tags`, `api/comments`, `api/contact`, `api/newsletter`, and `api/search`.
 - Nodemailer (SMTP)
+  - Use a mail service with env-based credentials and fallback logging when email delivery fails.
 - JWT for auth
 - express-rate-limit
 - dotenv
@@ -206,8 +229,16 @@ Admin only endpoints:
 
 **Database and Storage**
 - MongoDB with Mongoose
+  - Use Mongoose models for `Post`, `Author`, `Category`, `Tag`, `Comment`, `Subscriber`, and `ContactSubmission`.
+  - Define relations using references: post.author, post.category, post.tags, comment.post.
+  - Include timestamps via `timestamps: true` and use `publishedAt` for published posts.
+  - Add indexes on `slug` (unique), `category`, `tags`, `status`, `publishedAt`, and text indexes on `title`, `content`, and `tags` for search.
+  - Use lean queries for public list endpoints and aggregation pipelines for counts, related posts, and filters.
+  - Store rich HTML content as sanitized HTML and compute reading time server-side before save.
 - Cloudinary for image uploads
+  - Use image upload routes to return hosted image URLs for the editor and post cover images.
 - Redis (optional for caching)
+  - Optionally cache hot responses such as post lists, category/tag metadata, and popular posts for faster public reads.
 
 **Deployment**
 - Frontend and backend together on Railway
