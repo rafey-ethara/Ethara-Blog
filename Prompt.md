@@ -1,183 +1,223 @@
-# Blog App Project Prompt
+# Blog Platform - Golden Prompt
 
 ## Context and Role
 
-You are building a blog application from scratch as a fullstack developer. The main goal here is to create something that feels really well made. It should not just work well. Also be enjoyable to read and navigate. The platform needs to use Framer Motion for animations that happen when you scroll. The platform should also be fast, easy to use and ready for production.
-
-This journey should start from the hero section, go through articles into categories and end with subscribing or getting in touch.
-
-The platform also needs a working backend, a newsletter subscription system, a contact form and email notifications to the blog owner whenever someone reaches out or subscribes.
-
----
+You are a fullstack developer building a content first blog platform from the ground up. The product needs to feel genuinely well crafted and good, not just functional. Every section of the page should tell a story as the user scrolls through it with animations that feel intentional not decorative. The platform handles real publishing workflows which is writing, editing, categorizing and distributing content to subscribers. It also has a working backend that logs contact submissions and sends email notifications to the blog owner.
 
 ## Objective
 
-- Scroll based animations using Framer Motion throughout the site
-- Smooth page transitions between all routes
-- Full CRUD for posts, categories and tags
-- A rich text editor for writing and editing posts
-- A newsletter subscribe modal (animated with email confirmation)
-- A contact form modal (animated with email to owner)
-- Secure logging of all form submissions
-- SEO ready pages with meta tags, Open Graph and a sitemap
+Build a production ready blog platform that covers the following
 
----
+- Scroll triggered storytelling animations using Framer Motion across all pages
+- Smooth animated page transitions at the route level
+- Full CRUD operations for posts, categories and tags
+- A rich text editor for drafting and editing posts
+- An animated newsletter subscription modal with email confirmation
+- An animated contact form modal that emails the blog owner on submission
+- Secure server side logging of all form submissions
+- SEO optimized pages with meta tags, Open Graph and a sitemap
 
-## Pages
+**Pages to build:**
 
-**Home** — This is the first impression. Begin with the animated hero that reveals the headline word by word. Below that, show a featured post prominently, then a grid of recent articles that fade in as the user scrolls. Include category pill filters and a newsletter CTA near the bottom.
+- **Home** - Animated hero that reveals the headline word by word. Below it one featured post, a grid of recent articles that animate in on scroll, category pill filters and a newsletter CTA at the bottom.
+- **Blog Feed (`/blog`)** - Full post list with category and tag filtering, sort options (latest, popular, trending) and pagination. Cards animate in as they enter the viewport.
+- **Single Post (`/blog/[slug]`)** - Reading progress bar at the top. Cover image with a subtle parallax effect on scroll. Article sections reveal as they come into view. At the bottom author bio, related posts and a comment section. Like, bookmark and share buttons with small motion interactions.
+- **Category Page (`/category/[slug]`) and Tag Page (`/tag/[slug]`)** - Filtered post views with an animated entrance and a short description at the top.
+- **About / Author Page** - Animated profile section, bio, social links and the author's post list.
+- **Search (`/search`)** - Live results with a 300ms debounced API call. Results animate in. Empty states have a thoughtful fallback animation.
+- **Admin Dashboard (`/admin`, protected)** - Create, edit and delete posts using the rich text editor. Upload images with preview. Manage categories and tags. View contact submissions and subscriber records.
 
-**Blog Feed (`/blog`)** — A browsable list of all posts. Users can filter by category or tag, sort by latest, popular, or trending and paginate or scroll infinitely. Animate the cards as they come into view.
 
-**Single Post (`/blog/[slug]`)** — This is where the most care goes. Show a reading progress bar at the top that fills as the user scrolls. The cover image should have a slight background movement effect when you scroll below. Article sections should reveal as you scroll into them. At the bottom, show the author bio, related posts and a comment section. Include like, bookmark and share buttons with small satisfying animations.
+## Input Data and Requirements
 
-**Category and Tag Pages (`/category/[slug]`, `/tag/[slug]`)** — Simple filtered views with an animated entrance and a short category description at the top.
+**Contact Form Fields**
+- Name (required)
+- Email (required, must be a valid email format)
+- Phone number (required, numeric validation)
+- Subject (required)
+- Message (optional)
 
-**Author / About Page (`/about` or `/author/[id]`)** — Animated profile with bio, social links and a list of the author's posts.
+**Newsletter Subscription Fields**
+- Name (required)
+- Email (required, must be a valid email format)
 
-**Search (`/search`)** — Live search with debounced API calls. Results animate in. If nothing is found, show a thoughtful empty state with an animation.
+**Post Data Model**
+- id, title, slug, rich HTML content, cover image URL, author reference, category reference, tag references
+- Status: draft or published
+- Reading time (auto calculated)
+- Like count, view count
+- Timestamps: created, updated, published
 
-**Admin Dashboard (`/admin`, protected)** — Where content gets managed. Authors can create, edit and delete posts using a rich text editor. Images can be uploaded with a preview. Categories and tags can be managed here too. Admins can also see contact submissions and newsletter subscribers.
+**Other Models**
+- Author: id, name, email, avatar, bio, social links, role
+- Comment: id, post reference, name, email, content, approved flag, created timestamp
+- Subscriber: id, name, email, subscribed timestamp
+- Contact Submission: id, name, email, phone, subject, message, created timestamp
 
----
+**Database Seeding**
 
-## Animations
+Include a seed script at `backend/src/scripts/seed.js`, runnable with `npm run seed`. It should:
+- Clear existing records first
+- Insert one default admin author with name, email, avatar URL, bio and social links
+- Insert five published posts across at least two categories (e.g., Technology, Design, Productivity) with at least three paragraphs of rich HTML content each, realistic reading times and a cover image URL per post
+- Insert the categories and tags used by those posts
+- Insert three sample newsletter subscribers
+- Insert two sample contact submissions
+- Log a success message per collection and exit cleanly
 
-Use Framer Motion `useInView` and `motion` components throughout. The general approach is:
 
-- Hero text reveals with staggered word or letter animations using `variants` and `staggerChildren`
-- Blog cards fade in and slide up as they enter the viewport, staggered by index
-- The reading progress bar uses a smooth `scaleX` transform on a fixed element at the top
-- Modals use `AnimatePresence` so they animate in and out cleanly
-- Page transitions are handled with `AnimatePresence` at the route level — a simple fade or slide works well
-- Small interactions like the like button (pulse), bookmark (flip) and share (pop) make the experience feel alive
+## Data Processing
 
----
+**Animations**
+- Hero text: staggered word or letter reveal using Framer Motion `variants` and `staggerChildren`
+- Blog cards: fade in and slide up on viewport entry, staggered by index using `useInView`
+- Reading progress bar: smooth `scaleX` transform on a fixed top element
+- Modals: `AnimatePresence` for clean entrance and exit
+- Page transitions: `AnimatePresence` at the route level - a simple fade or directional slide
+- Micro-interactions: like button pulse, bookmark flip, share pop
 
-## Layout and Responsiveness
+**Sticky Navbar**
+Adjusts opacity and backdrop blur as the user scrolls. Collapses to a hamburger on mobile.
 
-The navbar should stick to the top and adjust its opacity and backdrop blur as the user scrolls. The footer should have a newsletter CTA, social links and sitemap navigation.
+**Rich Text Editor (TipTap)**
+Toolbar supports: bold, italic, underline, H1–H3, blockquote, code block, bullet list, numbered list, links and image upload. Images upload to Cloudinary or S3 and are inserted by URL. Output is sanitized HTML stored in the database. Authors can toggle between edit mode and a rendered preview.
 
-On mobile it's a single column with a collapsible nav. On the tablet it opens to two columns. On the desktop it goes to three columns with a sidebar on post pages.
+**Search**
+Debounced at 300ms. Performs full-text search across post titles, content and tags. Results are paginated at 10 per page.
 
-Every interactive element needs ARIA labels. Modals need focus trapping. Use semantic HTML throughout — `article`, `nav`, `main`, `aside`, `header`, `footer`. Color contrast should meet WCAG AA at minimum. Include a skip to content link for screen readers.
+**Authentication**
+JWT-protected admin routes. POST login returns a token. Token is sent in the Authorization header for all admin API calls.
 
----
+**Input Sanitization**
+Sanitize all user-submitted inputs server-side using `sanitize-html` or `DOMPurify` before writing to the database. This applies to all form fields and rich text editor output.
 
-## Contact Form
+**Rate Limiting**
+Apply `express-rate-limit` to all public-facing endpoints (contact, newsletter, search, comments).
 
-The "Get in Touch" button opens a modal that uses Framer Motion for animation. The modal keeps the focus while it's open and closes when the user clicks back button. The form collects the name (required), email (required), phone number (required), subject (required) and message (optional). Validation occurs on the client side, providing clear inline error messages if any. A spinner appears during submission and a toast notification shows whether the submission was successful or failed on submit.
+**Email Logic**
+- Contact form submission → email sent to blog owner with name, email, phone, subject, message and timestamp
+- Newsletter subscription → confirmation email to subscriber + notification email to owner
+- Use Nodemailer with SMTP. All credentials stored in environment variables via `dotenv`
 
-On the backend, submissions are logged and an email is sent to the blog owner with all the submitted details including a timestamp.
 
----
+## Output Requirements
 
-## Newsletter
+**API Responses**
 
-The subscribe CTA opens a modal with a scale and fade animation. The form just asks for a name and email, both required.
+All endpoints return structured JSON.
 
-When someone subscribes, three things happen — the subscriber is saved to the database, a confirmation email goes to them and a notification email goes to the blog owner. After a successful subscription show a satisfying success animation that is something that feels like a small celebration.
-
----
-
-## Backend
-
-Build a RESTful API with the following endpoints:
-
-- **Posts** — GET all (with pagination, filters, sort), GET by slug, POST (admin), PUT (admin), DELETE (admin)
-- **Categories and tags** — GET all categories, GET all tags, POST new category (admin)
-- **Comments** — GET comments for a post, POST a new comment, DELETE a comment (admin)
-- **Contact and newsletter** — POST contact form submission, POST newsletter subscription
-- **Auth** — POST login (returns JWT), POST logout, GET current user
-- **Search** — GET with a query string for full-text search across posts
-
-For emails, use Nodemailer with SMTP. Contact submissions send an email to the owner. Newsletter subscriptions send a confirmation to the subscriber and a notification to the owner.
-
-All credentials go in environment variables via `dotenv`. JWT protects admin routes. Rate limiting goes on all public endpoints using `express-rate-limit`. Sanitize every input to prevent XSS and injection. CORS should only allow trusted origins.
-
----
-
-## Data Models
-
-- **Post** — id, title, slug, rich HTML content, cover image, author reference, category reference, tag references, a status (draft or published), reading time, like count, view count and timestamps for created, updated and published
-- **Author** — id, name, email, avatar, bio, social links and a role
-- **Comment** — id, post reference, name, email, content, an approved flag and a created timestamp
-- **Subscriber** — id, name, email and a subscribed timestamp
-- **Contact Submission** — id, name, email, phone, subject, message and a created timestamp
-
----
-
-## Database Seeding
-
-Include a seed script at `backend/src/scripts/seed.js`. When run with `npm run seed`, it should clean and remove existing data and insert the following into the database:
-
-- One default admin author with a name, email, avatar URL, bio and social links
-- Five blog posts published. Each has a different title, slug, rich html content (at least three paragraphs), an excerpt, a cover image url, category, one or two tags, a realistic reading time and a published timestamp. The 5 posts should be from at least two different categories (e.g. Technology, Design, Productivity) and use diverse tags so that the category and tag filter pages have some meaningful content to display
-- The categories and tags referenced by the posts
-- Three sample newsletter subscribers
-- Two sample contact submissions
-
-The seed script should log a success message for each inserted collection and exit cleanly. Add a note in the README explaining how to run it.
-
----
-
-## Rich Text Editor
-
-Use TipTap. The toolbar should support bold, italic, underline, headings H1 through H3, blockquote, code block, bullet list, numbered list, links and image upload. Images upload to Cloudinary or S3 and get inserted by URL. The output is sanitized HTML stored in the database. Include a preview mode so authors can toggle between editing and seeing the rendered result.
-
----
-
-## SEO
-
-Every page needs a dynamic title and meta description using Next.js Metadata API. Post and category pages need Open Graph and Twitter Card tags. Article and author pages should include JSON-LD structured data. Generate `sitemap.xml` and `robots.txt` automatically. Every page needs a canonical URL and every post image needs an alt attribute.
-
----
-
-## API Responses
-
-Always return structured JSON.
-
-**Success:**
+Success:
 ```json
 { "success": true, "data": {}, "message": "Post retrieved successfully." }
 ```
 
-**Error:**
+Error:
 ```json
 { "success": false, "error": "Validation failed.", "details": { "email": "Invalid email format." } }
 ```
 
----
+
+**REST API Endpoints**
+
+Public endpoints:
+- `/api/posts` - all posts with pagination, filters, and sort
+- `/api/posts/:slug` - single post by slug
+- `/api/categories` - all categories
+- `/api/tags` - all tags
+- `/api/comments/:postId` (GET) - fetch comments for a post
+- `/api/comments/:postId` (POST) - submit a new comment
+- `/api/contact` - handle contact form submissions
+- `/api/newsletter` - register a new subscriber
+- `/api/search` - full-text search across posts using a query string
+- `/api/auth/login` - submit credentials and receive a JWT
+
+Admin only endpoints:
+- `/api/posts` (POST) - create a new post
+- `/api/posts/:id` (PUT) - update an existing post
+- `/api/posts/:id` (DELETE) - remove a post
+- `/api/categories` (POST) - create a new category
+- `/api/comments/:id` (DELETE) - remove a comment
+- `/api/auth/me` (GET) - return the currently authenticated user
+
+**SEO Output**
+- Dynamic `<title>` and `<meta name="description">` per page using Next.js Metadata API
+- Open Graph and Twitter Card tags on post and category pages
+- JSON-LD structured data on article and author pages
+- Auto-generated `sitemap.xml` and `robots.txt`
+- Canonical URLs on every page
+- Alt text on every post image
+
+**Contact Form UX**
+- Spinner visible during submission
+- Toast notification on success or failure
+- Modal closes and shows a success state after confirmed submission
+
+**Newsletter UX**
+- Scale and fade animation on modal open
+- After successful subscription: a small celebratory success animation
+- Confirmation email to subscriber triggered automatically
+
 
 ## Error Handling
 
-**Frontend** — Show inline validation errors in forms, toast notifications for API responses, a custom animated 404 page for missing posts and graceful messaging for network failures.
+**Frontend**
+- Inline validation errors on all form fields before submission
+- Toast notifications for API success and failure responses
+- Custom animated 404 page for missing posts or routes
+- Graceful messaging for network failures or timeouts
 
-**Backend** — Return structured errors with proper HTTP status codes, log failures with timestamps, handle database connection issues gracefully and fall back cleanly if the email service is unavailable.
+**Backend**
+- Return structured JSON errors with proper HTTP status codes (400 for validation, 401 for auth, 500 for server)
+- Log all failures with a timestamp and request context
+- If the email service is unavailable, log the failure and return a graceful error - do not crash the submission flow
+- Handle database connection failures gracefully with a startup check and retry logic
 
----
 
-## Performance
+## Performance and Scalability
 
-Split the bundle. Lazy load images using Next.js's `Image` component. Lazy-load the editor and modals with `React.lazy` and `Suspense`. Cache post lists and categories with Redis or SWR. Debounce the search input at 300ms. Index the database on frequently queried fields. Paginate all list endpoints at 10 items per page by default.
-
----
+- Split the bundle by route using Next.js dynamic imports
+- Lazy load the rich text editor and modals with `React.lazy` and `Suspense`
+- Use Next.js `Image` component for lazy image loading with correct `alt` attributes
+- Cache post list and category data with SWR or React Query (stale-while-revalidate strategy)
+- Debounce search input at 300ms
+- Paginate all list endpoints at 10 items per page by default
+- Index MongoDB on: `slug`, `category`, `tags`, `status`, `publishedAt`
+- CORS restricted to trusted origins only
+- Animations use only `transform` and `opacity` to stay GPU-friendly and avoid layout thrashing
 
 ## Tech Stack
 
-- **Frontend** — Next.js (App Router), Framer Motion, Tailwind CSS, TipTap, SWR or React Query, React Hook Form with Zod, react-hot-toast
-- **Backend** — Node.js with Express, Nodemailer, JWT, express-rate-limit, dotenv, sanitize-html or DOMPurify
-- **Database and storage** — MongoDB with Mongoose. Cloudinary for images. Redis optionally for caching
-- **Deployment** — Both frontend and backend together on Railway
+**Frontend**
+- Next.js (App Router)
+- Framer Motion
+- Tailwind CSS
+- TipTap (rich text editor)
+- SWR or React Query
+- React Hook Form with Zod
+- react-hot-toast
 
----
+**Backend**
+- Node.js with Express
+- Nodemailer (SMTP)
+- JWT for auth
+- express-rate-limit
+- dotenv
+- sanitize-html or DOMPurify
 
-## Folder Structure
+**Database and Storage**
+- MongoDB with Mongoose
+- Cloudinary for image uploads
+- Redis (optional for caching)
 
-Root folder should have `frontend`, `backend` and `README.md`. Inside frontend, follow Next.js structure. Inside backend, follow Express.js structure.
+**Deployment**
+- Frontend and backend together on Railway
 
----
 
 ## Documentation
 
-The README should cover how to run the project locally, how to configure environment variables, how to set up `.env.example` and seed the database and how to deploy on Railway. Also include a quick reference for all API endpoints.
+The README must include:
+- How to run the project locally (frontend and backend separately)
+- How to configure environment variables with a working `.env.example`
+- How to run the seed script (`npm run seed`) and what it inserts
+- All API endpoints with method, path, auth requirement and a one line description
+- Deployment steps for Railway
